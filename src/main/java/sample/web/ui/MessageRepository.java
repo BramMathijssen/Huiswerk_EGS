@@ -18,6 +18,8 @@ package sample.web.ui;
 
 public interface MessageRepository {
 
+	//Test Commit
+
 	Iterable<Message> findAll();
 
 	Message save(Message message);
