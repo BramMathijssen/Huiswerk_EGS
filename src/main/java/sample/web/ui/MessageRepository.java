@@ -16,16 +16,20 @@
 
 package sample.web.ui;
 
-public interface MessageRepository {
+import org.springframework.data.repository.CrudRepository;
+
+
+
+public interface MessageRepository extends CrudRepository<Message,Long> {
 
 	//Test Commit
 
-	Iterable<Message> findAll();
-
-	Message save(Message message);
-
-	Message findMessage(Long id);
-
-	void deleteMessage(Long id);
+//	Iterable<Message> findAll();
+//
+//	Message save(Message message);
+//
+//	Message findMessage(Long id);
+//
+//	void deleteMessage(Long id);
 
 }
