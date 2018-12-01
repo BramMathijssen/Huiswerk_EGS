@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sample.web.ui;
+package sample.web.ui.domain;
 
 import com.sun.javafx.beans.IDProperty;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
