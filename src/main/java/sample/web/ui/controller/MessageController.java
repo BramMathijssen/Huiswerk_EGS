@@ -16,6 +16,7 @@
 
 package sample.web.ui.controller;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import sample.web.ui.domain.Message;
@@ -87,9 +88,10 @@ public class MessageController {
 		prodCopy = productRepository.save(prodCopy);
 
 		order.add(prodCopy);
-		orderRepository.save(order);
+		//orderRepository.save(order);
 	}
 
+	@Transactional
 	@GetMapping
 	public ModelAndView list() {
 
