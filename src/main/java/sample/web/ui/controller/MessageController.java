@@ -19,6 +19,9 @@ package sample.web.ui.controller;
 import javax.validation.Valid;
 
 import sample.web.ui.domain.Message;
+import sample.web.ui.domain.Order;
+import sample.web.ui.domain.Product;
+import sample.web.ui.domain.ProductCatalog;
 import sample.web.ui.repository.MessageRepository;
 
 import org.springframework.stereotype.Controller;
@@ -30,22 +33,78 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sample.web.ui.repository.OrderRepository;
+import sample.web.ui.repository.ProductCatalogRepository;
+import sample.web.ui.repository.ProductRepository;
 
 @Controller
 @RequestMapping("/")
 public class MessageController {
 
 	private final MessageRepository messageRepository;
+	private final OrderRepository orderRepository;
+	private final ProductCatalogRepository productCatalogRepository;
+	private final ProductRepository productRepository;
 
-	public MessageController(MessageRepository messageRepository) {
+
+	// constructor dependency injection
+	public MessageController(MessageRepository messageRepository, OrderRepository orderRepository, ProductCatalogRepository productCatalogRepository, ProductRepository productRepository) {
 		this.messageRepository = messageRepository;
+		this.orderRepository = orderRepository;
+		this.productCatalogRepository = productCatalogRepository;
+		this.productRepository = productRepository;
+	}
+
+	public void createProductCatalogAndProductsAndOrder() {
+
+		// build product catalog, two products, and order
+
+		ProductCatalog productCatalog = new ProductCatalog();
+
+		// right productCatalog: without id; left productCatalog: with id
+		// (needed because of autoincrement)
+		productCatalog = productCatalogRepository.save(productCatalog);
+
+		Product prod1 = new Product("schroefje", 2);
+		prod1 = productRepository.save(prod1);
+		Product prod2 = new Product("moertje", 1);
+		prod2 = productRepository.save(prod2);
+
+		Order order = new Order();
+		order = orderRepository.save(order);
+
+		// build add two products
+		productCatalog.add(prod1);
+		productCatalog.add(prod2);
+		productCatalogRepository.save(productCatalog);
+
+		// "find" a product in the catalog and add it to the order
+		Product prod = productCatalog.find(2L);
+
+		// make a copy of the product (the copy has no id yet)
+		// why a copy is made?
+		Product prodCopy = new Product(prod);
+		prodCopy = productRepository.save(prodCopy);
+
+		order.add(prodCopy);
+		orderRepository.save(order);
 	}
 
 	@GetMapping
 	public ModelAndView list() {
-		Iterable<Message> messages = this.messageRepository.findAll();
+
+		createProductCatalogAndProductsAndOrder();
+
+		Iterable<Message> messages = messageRepository.findAll();
 		return new ModelAndView("messages/list", "messages", messages);
 	}
+
+
+//	@GetMapping
+//	public ModelAndView list() {
+//		Iterable<Message> messages = this.messageRepository.findAll();
+//		return new ModelAndView("messages/list", "messages", messages);
+//	}
 
 	@GetMapping("{id}")
 	public ModelAndView view(@PathVariable("id") Message message) {
